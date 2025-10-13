@@ -5,25 +5,41 @@ import {
   TextInput,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import type { RootStackParamList } from "../../navigation/RootStack";
 import { useLogin } from "../../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "../../store";
+import { loginSuccess } from "../../store/authSlice";
 
 // username: "emilys", password: "emilyspass"
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("emilys");
+  const [password, setPassword] = useState("emilyspass");
 
   type LoginNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
   const navigation = useNavigation<LoginNavProp>();
 
   const { mutate: login, error } = useLogin();
 
+  const dispatch = useDispatch<AppDispatch>();
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.auth.isAuthenticated
+  );
+
+  console.log("isAuthenticated", isAuthenticated);
+
   const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigation.reset({ index: 0, routes: [{ name: "Products" }] });
+    }
+  }, [isAuthenticated, navigation]);
 
   if (isLoggingIn) {
     return <ActivityIndicator size={"large"} style={{ flex: 1 }} />;
@@ -43,6 +59,8 @@ const Login = () => {
       {
         onSuccess: (responseData) => {
           if (responseData?.accessToken) {
+            dispatch(loginSuccess(responseData));
+
             navigation.reset({
               index: 0,
               routes: [{ name: "Products" }],
