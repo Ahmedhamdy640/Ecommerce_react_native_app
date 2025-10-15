@@ -27,19 +27,19 @@ const Login = () => {
   const { mutate: login, error } = useLogin();
 
   const dispatch = useDispatch<AppDispatch>();
-  const isAuthenticated = useSelector(
-    (state: RootState) => state.auth.isAuthenticated
+  const hasAccessToken = useSelector(
+    (state: RootState) => state.auth.accessToken !== null
   );
 
-  console.log("isAuthenticated", isAuthenticated);
+  console.log("hasAccessToken", hasAccessToken);
 
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      navigation.reset({ index: 0, routes: [{ name: "Products" }] });
+    if (hasAccessToken) {
+      navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
     }
-  }, [isAuthenticated, navigation]);
+  }, [hasAccessToken, navigation]);
 
   if (isLoggingIn) {
     return <ActivityIndicator size={"large"} style={{ flex: 1 }} />;
@@ -63,7 +63,7 @@ const Login = () => {
 
             navigation.reset({
               index: 0,
-              routes: [{ name: "Products" }],
+              routes: [{ name: "Tabs" }],
             });
           }
         },

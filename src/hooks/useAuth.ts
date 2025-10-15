@@ -19,3 +19,17 @@ export const useLogin = () => {
     },
   });
 };
+
+// export const useLogout = () => {
+//   const queryClient = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: async () => {
+//       const response = await authApi.post("/logout");
+//       return response.data;
+//     },
+//     onSuccess: async () => {
+//       queryClient.invalidateQueries({ queryKey: ["user"] });
+//     },
+//   });
+// };
