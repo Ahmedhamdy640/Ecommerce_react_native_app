@@ -16,6 +16,7 @@ import type { AppDispatch, RootState } from "../../store";
 import { loginSuccess } from "../../store/authSlice";
 
 // username: "emilys", password: "emilyspass"
+// another user: "michaelw", password: "michaelwpass"
 
 const Login = () => {
   const [username, setUsername] = useState("emilys");

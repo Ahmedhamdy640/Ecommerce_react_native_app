@@ -1,5 +1,8 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+import axios from "axios";
 
 interface Credentials {
   username: string;
@@ -20,16 +23,21 @@ export const useLogin = () => {
   });
 };
 
-// export const useLogout = () => {
-//   const queryClient = useQueryClient();
+export const useCurrentUser = () => {
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
-//   return useMutation({
-//     mutationFn: async () => {
-//       const response = await authApi.post("/logout");
-//       return response.data;
-//     },
-//     onSuccess: async () => {
-//       queryClient.invalidateQueries({ queryKey: ["user"] });
-//     },
-//   });
-// };
+  return useQuery({
+    queryKey: ["currentUser"],
+    queryFn: async () => {
+      const response = await axios.get("https://dummyjson.com/user/me", {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        withCredentials: true,
+      });
+      // console.log("response current user", response.data);
+      return response.data;
+    },
+    enabled: !!accessToken,
+  });
+};
