@@ -1,17 +1,12 @@
 import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import React from "react";
-import { ProductType } from "../types/ProductType";
+import { Product } from "../types/ProductType";
 import { Ionicons } from "@expo/vector-icons";
-import { useCurrentUser } from "../hooks/useAuth";
-import { SUPER_ADMI_USERNAME } from "../constants";
-
 interface ProductCardProps {
-  data: ProductType;
+  data: Product;
+  isAdmin?: boolean;
 }
-const ProductCard = ({ data }: ProductCardProps) => {
-  const { data: currentUser } = useCurrentUser();
-
-  const isAdmin = currentUser?.username === SUPER_ADMI_USERNAME;
+const ProductCard = ({ data, isAdmin }: ProductCardProps) => {
   return (
     <View style={styles.container}>
       {isAdmin && (

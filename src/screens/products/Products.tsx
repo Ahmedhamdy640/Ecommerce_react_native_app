@@ -1,38 +1,37 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
 import React from "react";
 import { useProducts } from "../../hooks/useProducts";
-import { ProductType } from "../../types/ProductType";
 import ProductCard from "../../components/ProductCard";
-import { useCurrentUser } from "../../hooks/useAuth";
-import { useDispatch } from "react-redux";
-import { AppDispatch } from "../../store";
-import { currentUserData } from "../../store/authSlice";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+import { SUPER_ADMI_USERNAME } from "../../constants";
+import { Product } from "../../types/ProductType";
 
 interface RenderItemProps {
-  item: ProductType;
+  item: Product;
 }
 
 const Products = () => {
   const { data: products, isLoading, error } = useProducts();
-  const { data: currentUser, isLoading: isLoadingCurrentUser } =
-    useCurrentUser();
 
-  const dispatch = useDispatch<AppDispatch>();
+  const currentUser = useSelector(
+    (state: RootState) => state.auth.currentUserData
+  );
+  console.log(">>>>", currentUser);
 
-  React.useEffect(() => {
-    if (currentUser) {
-      dispatch(currentUserData(currentUser));
-    }
-  }, [currentUser, dispatch]);
+  const isAdmin = currentUser?.username === SUPER_ADMI_USERNAME;
 
-  const renderItem = ({ item }: RenderItemProps) =>
-    isLoading || isLoadingCurrentUser ? (
-      <ActivityIndicator size="large" color="#0000ff" />
-    ) : error ? (
-      <Text>{error.message}</Text>
-    ) : (
-      <ProductCard data={item} />
-    );
+  const renderItem = ({ item }: RenderItemProps) => (
+    <ProductCard data={item} isAdmin={isAdmin} />
+  );
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>{error.message}</Text>;
+  }
 
   return (
     <FlatList

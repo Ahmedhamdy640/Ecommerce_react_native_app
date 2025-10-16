@@ -2,10 +2,19 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Settings from "../screens/settings/Settings";
 import { Ionicons } from "@expo/vector-icons";
 import { TopTabs } from "./TopTabs";
+import { useCurrentUser } from "../hooks/useAuth";
+import { ActivityIndicator } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
 export const Tabs = () => {
+  const { data, isLoading } = useCurrentUser();
+
+  console.log("Current User Data in Tabs:", data);
+
+  if (isLoading) {
+    return <ActivityIndicator size="large" style={{ flex: 1 }} />;
+  }
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

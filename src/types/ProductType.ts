@@ -1,4 +1,4 @@
-export type ProductType = {
+export type Product = {
   id: number;
   title: string;
   description: string;
@@ -38,7 +38,7 @@ export type ProductType = {
 };
 
 export type ProductsResponse = {
-  products: ProductType[];
+  products: Product[];
   total: number;
   skip: number;
   limit: number;
