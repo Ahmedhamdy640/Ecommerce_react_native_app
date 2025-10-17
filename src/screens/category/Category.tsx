@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
 import React from "react";
-import { useCategory } from "../../hooks/useCategory";
+import { useCategory, useDeleteCategoryProduct } from "../../hooks/useCategory";
 import { Product } from "../../types/ProductType";
 import ProductCard from "../../components/ProductCard";
 import { useSelector } from "react-redux";
@@ -11,16 +11,22 @@ interface RenderItemProps {
   item: Product;
 }
 const Category = () => {
-  const { data, isLoading, error } = useCategory();
+  const { data, isLoading, error, refetch } = useCategory();
+  const deleteProduct = useDeleteCategoryProduct();
+
+  const handleDelete = (productId: number) => {
+    if (!data) return;
+    deleteProduct.mutate(productId);
+  };
 
   const currentUser = useSelector(
     (state: RootState) => state.auth.currentUserData
   );
-  console.log(">>>>", currentUser);
+  // Product.log(">>>>", currentUser);
 
   const isAdmin = currentUser?.username === SUPER_ADMI_USERNAME;
   const renderItem = ({ item }: RenderItemProps) => (
-    <ProductCard data={item} isAdmin={isAdmin} />
+    <ProductCard data={item} isAdmin={isAdmin} handleDelete={handleDelete} />
   );
 
   const header = () => (
@@ -47,6 +53,8 @@ const Category = () => {
       renderItem={renderItem}
       data={data?.products}
       numColumns={2}
+      refreshing={isLoading}
+      onRefresh={refetch}
     />
   );
 };

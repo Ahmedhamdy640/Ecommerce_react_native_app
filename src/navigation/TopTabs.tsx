@@ -8,7 +8,7 @@ export const TopTabs = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen name="All Products" component={Products} />
-      <Tab.Screen name="Category" component={Category} />
+      <Tab.Screen name="smartphones" component={Category} />
     </Tab.Navigator>
   );
 };

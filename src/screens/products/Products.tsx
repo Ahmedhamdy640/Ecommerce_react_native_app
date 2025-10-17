@@ -1,6 +1,6 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
 import React from "react";
-import { useProducts } from "../../hooks/useProducts";
+import { useDeleteProduct, useProducts } from "../../hooks/useProducts";
 import ProductCard from "../../components/ProductCard";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
@@ -12,17 +12,22 @@ interface RenderItemProps {
 }
 
 const Products = () => {
-  const { data: products, isLoading, error } = useProducts();
+  const { data: products, isLoading, error, refetch } = useProducts();
+  const deleteProduct = useDeleteProduct();
+
+  const handleDelete = (productId: number) => {
+    deleteProduct.mutate(productId);
+  };
 
   const currentUser = useSelector(
     (state: RootState) => state.auth.currentUserData
   );
-  console.log(">>>>", currentUser);
+  // console.log(">>>>", currentUser);
 
   const isAdmin = currentUser?.username === SUPER_ADMI_USERNAME;
 
   const renderItem = ({ item }: RenderItemProps) => (
-    <ProductCard data={item} isAdmin={isAdmin} />
+    <ProductCard data={item} isAdmin={isAdmin} handleDelete={handleDelete} />
   );
 
   if (isLoading) {
@@ -38,6 +43,8 @@ const Products = () => {
       renderItem={renderItem}
       data={products?.products}
       numColumns={2}
+      refreshing={isLoading}
+      onRefresh={refetch}
     />
   );
 };

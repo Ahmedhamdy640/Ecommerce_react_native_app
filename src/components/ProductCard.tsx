@@ -1,18 +1,45 @@
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React from "react";
 import { Product } from "../types/ProductType";
 import { Ionicons } from "@expo/vector-icons";
+import { useDeleteProduct } from "../hooks/useProducts";
 interface ProductCardProps {
   data: Product;
   isAdmin?: boolean;
+  handleDelete?: (productId: number) => void;
 }
-const ProductCard = ({ data, isAdmin }: ProductCardProps) => {
+const ProductCard = ({ data, isAdmin, handleDelete }: ProductCardProps) => {
+  const onPressDelete = () => {
+    Alert.alert(
+      "Delete Product",
+      "Are you sure you want to delete this product?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: () => handleDelete?.(data.id),
+        },
+      ]
+    );
+  };
+
   return (
     <View style={styles.container}>
       {isAdmin && (
-        <Pressable style={styles.removeIcon} onPress={() => {}}>
-          <Ionicons name="trash" size={24} color="red" />
-        </Pressable>
+        <TouchableOpacity style={styles.removeIcon} onPress={onPressDelete}>
+          <Ionicons name="trash" size={24} color="red" style={styles.icon} />
+        </TouchableOpacity>
       )}
       <View>
         <Image
@@ -59,6 +86,10 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: 10,
     right: 10,
+    zIndex: 999,
+  },
+  icon: {
+    zIndex: 999,
   },
   infoContainer: {
     flexDirection: "row",

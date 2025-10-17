@@ -10,8 +10,6 @@ const Tab = createBottomTabNavigator();
 export const Tabs = () => {
   const { data, isLoading } = useCurrentUser();
 
-  console.log("Current User Data in Tabs:", data);
-
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
   }
