@@ -1,10 +1,4 @@
-import {
-  ActivityIndicator,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Button } from "../../components/Button";
 import { useNavigation } from "@react-navigation/native";
@@ -14,6 +8,7 @@ import { useLogin } from "../../hooks/useAuth";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../../store";
 import { loginSuccess } from "../../store/authSlice";
+import { CustomTextInput } from "../../components/CustomTextInput";
 
 // username: "emilys", password: "emilyspass"
 // another user: "michaelw", password: "michaelwpass"
@@ -81,20 +76,18 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        autoCapitalize="none"
+      <CustomTextInput
         value={username}
-        placeholder="Username"
-        style={styles.input}
-        onChangeText={(text) => setUsername(text)}
-      />
-      <TextInput
         autoCapitalize="none"
+        placeholder="Username"
+        onChangeText={(text) => setUsername(text.trim())}
+      />
+      <CustomTextInput
         value={password}
+        autoCapitalize="none"
         placeholder="Password"
         secureTextEntry
-        style={styles.input}
-        onChangeText={(text) => setPassword(text)}
+        onChangeText={(text) => setPassword(text.trim())}
       />
       {error && (
         <Text style={styles.errorMessage}>Login failed, please try again.</Text>
@@ -112,14 +105,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     paddingTop: 200,
-  },
-  input: {
-    height: 50,
-    width: "80%",
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
   },
   title: {
     fontSize: 24,
