@@ -37,9 +37,9 @@ const Login = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    if (hasAccessToken) {
-      navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
-    }
+    // if (hasAccessToken) {
+    //   navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+    // }
   }, [hasAccessToken, navigation]);
 
   if (isLoggingIn) {
