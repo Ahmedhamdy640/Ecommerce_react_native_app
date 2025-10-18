@@ -19,8 +19,8 @@ import { loginSuccess } from "../../store/authSlice";
 // another user: "michaelw", password: "michaelwpass"
 
 const Login = () => {
-  const [username, setUsername] = useState("emilys");
-  const [password, setPassword] = useState("emilyspass");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   type LoginNavProp = NativeStackNavigationProp<RootStackParamList, "Login">;
   const navigation = useNavigation<LoginNavProp>();
@@ -37,9 +37,9 @@ const Login = () => {
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
   useEffect(() => {
-    // if (hasAccessToken) {
-    //   navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
-    // }
+    if (hasAccessToken) {
+      navigation.reset({ index: 0, routes: [{ name: "Tabs" }] });
+    }
   }, [hasAccessToken, navigation]);
 
   if (isLoggingIn) {

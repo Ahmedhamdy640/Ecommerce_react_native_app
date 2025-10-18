@@ -34,23 +34,23 @@ const useIdleTimer = (onIdle: () => void, timeout = 10000) => {
   useEffect(() => {
     resetTimer();
 
-    const handleAppStateChange = (nextAppState: any) => {
-      if (nextAppState === "background") {
-        onIdle();
-        setIsIdle(true);
-      }
-    };
+    // const handleAppStateChange = (nextAppState: any) => {
+    //   if (nextAppState === "background") {
+    //     onIdle();
+    //     setIsIdle(true);
+    //   }
+    // };
 
-    const subscription = AppState.addEventListener(
-      "change",
-      handleAppStateChange
-    );
+    // const subscription = AppState.addEventListener(
+    //   "change",
+    //   handleAppStateChange
+    // );
 
     return () => {
       if (timerId.current) {
         clearTimeout(timerId.current);
       }
-      subscription.remove();
+      // subscription.remove();
     };
   }, [onIdle]);
 

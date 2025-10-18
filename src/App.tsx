@@ -5,10 +5,7 @@ import { RootStack } from "./navigation/RootStack";
 import { Provider } from "react-redux";
 import { store, persistor } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
-import {
-  LockScreen,
-  LockScreenHandles,
-} from "./screens/lock/LockScreen";
+import { LockScreen, LockScreenHandles } from "./screens/lock/LockScreen";
 import { useRef } from "react";
 
 const queryClient = new QueryClient();
@@ -16,7 +13,8 @@ const queryClient = new QueryClient();
 function AppContent() {
   const lockScreenRef = useRef<LockScreenHandles>(null);
 
-  const panResponder = lockScreenRef.current?.panResponder ?? PanResponder.create({});
+  const panResponder =
+    lockScreenRef.current?.panResponder ?? PanResponder.create({});
 
   return (
     <View style={styles.container} {...panResponder.panHandlers}>

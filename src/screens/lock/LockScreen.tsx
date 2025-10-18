@@ -94,7 +94,10 @@ export const LockScreen = forwardRef<LockScreenHandles, {}>((props, ref) => {
             <Button title="Unlock with Password" onPress={handlePasswordAuth} />
           </View>
         ) : (
-          <Button title="Unlock with Biometrics" onPress={handleBiometricAuth} />
+          <Button
+            title="Unlock with Biometrics"
+            onPress={handleBiometricAuth}
+          />
         )}
       </View>
     </Modal>
