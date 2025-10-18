@@ -1,18 +1,18 @@
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { AppState, PanResponder } from "react-native";
-import { useDispatch } from "react-redux";
-import { lockApp } from "../store/lockSlice";
 
-const useIdleTimer = (timeout = 10000) => {
-  const dispatch = useDispatch();
+const useIdleTimer = (onIdle: () => void, timeout = 10000) => {
   const timerId = useRef<NodeJS.Timeout | null>(null);
+  const [isIdle, setIsIdle] = useState(false);
 
   const resetTimer = () => {
     if (timerId.current) {
       clearTimeout(timerId.current);
     }
+    setIsIdle(false);
     timerId.current = setTimeout(() => {
-      dispatch(lockApp());
+      onIdle();
+      setIsIdle(true);
     }, timeout);
   };
 
@@ -36,7 +36,8 @@ const useIdleTimer = (timeout = 10000) => {
 
     const handleAppStateChange = (nextAppState: any) => {
       if (nextAppState === "background") {
-        dispatch(lockApp());
+        onIdle();
+        setIsIdle(true);
       }
     };
 
@@ -51,9 +52,9 @@ const useIdleTimer = (timeout = 10000) => {
       }
       subscription.remove();
     };
-  }, [dispatch]);
+  }, [onIdle]);
 
-  return panResponder;
+  return { panResponder, isIdle, setIsIdle };
 };
 
 export default useIdleTimer;

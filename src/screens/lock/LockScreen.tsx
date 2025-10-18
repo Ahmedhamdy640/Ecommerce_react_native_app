@@ -1,18 +1,46 @@
-import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Alert, TextInput } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import React, {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
+import {
+  View,
+  StyleSheet,
+  Button,
+  Alert,
+  TextInput,
+  Modal,
+  PanResponderInstance,
+} from "react-native";
+import { useSelector } from "react-redux";
 import * as LocalAuthentication from "expo-local-authentication";
-import { unlockApp } from "../../store/lockSlice";
 import { RootState } from "../../store";
+import useIdleTimer from "../../hooks/useIdleTimer";
 
-export const LockScreen = () => {
-  const dispatch = useDispatch();
+export interface LockScreenHandles {
+  panResponder: PanResponderInstance;
+}
+
+export const LockScreen = forwardRef<LockScreenHandles, {}>((props, ref) => {
   const [password, setPassword] = useState("");
   const [showPasswordInput, setShowPasswordInput] = useState(false);
-
   const user = useSelector((state: RootState) => state.auth.currentUserData);
 
+  const { panResponder, isIdle, setIsIdle } = useIdleTimer(() => {
+    setIsIdle(true);
+  });
+
+  useImperativeHandle(ref, () => ({
+    panResponder,
+  }));
+
   const handleBiometricAuth = async () => {
+    if (!user) {
+      setShowPasswordInput(true);
+      return;
+    }
+
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
     if (!hasHardware) {
       setShowPasswordInput(true);
@@ -21,7 +49,7 @@ export const LockScreen = () => {
 
     const isEnrolled = await LocalAuthentication.isEnrolledAsync();
     if (!isEnrolled) {
-      setShowPasswordInput(false);
+      setShowPasswordInput(true);
       return;
     }
 
@@ -30,7 +58,7 @@ export const LockScreen = () => {
     });
 
     if (success) {
-      dispatch(unlockApp());
+      setIsIdle(false);
     } else {
       setShowPasswordInput(true);
     }
@@ -38,7 +66,7 @@ export const LockScreen = () => {
 
   const handlePasswordAuth = () => {
     if (password === user?.password) {
-      dispatch(unlockApp());
+      setIsIdle(false);
     } else {
       Alert.alert("Error", "Incorrect password");
       setPassword("");
@@ -46,31 +74,32 @@ export const LockScreen = () => {
   };
 
   useEffect(() => {
-    handleBiometricAuth();
-  }, [dispatch]);
+    if (isIdle) {
+      handleBiometricAuth();
+    }
+  }, [isIdle]);
 
   return (
-    <View style={styles.container}>
-      {showPasswordInput ? (
-        <View style={styles.passwordContainer}>
-          <TextInput
-            style={styles.passwordInput}
-            placeholder="Enter password"
-            secureTextEntry
-            value={password}
-            onChangeText={setPassword}
-          />
-          <Button title="Unlock with Password" onPress={handlePasswordAuth} />
-        </View>
-      ) : (
-        <Button title="Unlock with Biometrics" onPress={handleBiometricAuth} />
-      )}
-      {/* <Button title="Unlock with Biometrics" onPress={handleBiometricAuth} /> */}
-      {/* {() => handleBiometricAuth} */}
-    </View>
+    <Modal visible={isIdle} transparent={true}>
+      <View style={styles.container}>
+        {showPasswordInput ? (
+          <View style={styles.passwordContainer}>
+            <TextInput
+              style={styles.passwordInput}
+              placeholder="Enter password"
+              secureTextEntry
+              value={password}
+              onChangeText={setPassword}
+            />
+            <Button title="Unlock with Password" onPress={handlePasswordAuth} />
+          </View>
+        ) : (
+          <Button title="Unlock with Biometrics" onPress={handleBiometricAuth} />
+        )}
+      </View>
+    </Modal>
   );
-};
-
+});
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
