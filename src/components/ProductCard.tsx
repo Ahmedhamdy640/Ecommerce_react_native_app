@@ -4,12 +4,11 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import React from "react";
 import { Product } from "../types/ProductType";
 import { Ionicons } from "@expo/vector-icons";
-import { useDeleteProduct } from "../hooks/useProducts";
 interface ProductCardProps {
   data: Product;
   isAdmin?: boolean;
@@ -23,13 +22,13 @@ const ProductCard = ({ data, isAdmin, handleDelete }: ProductCardProps) => {
       [
         {
           text: "Cancel",
-          style: "cancel",
+          style: "cancel"
         },
         {
           text: "Delete",
           style: "destructive",
-          onPress: () => handleDelete?.(data.id),
-        },
+          onPress: () => handleDelete?.(data.id)
+        }
       ]
     );
   };
@@ -80,26 +79,26 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: "#fff",
     height: 245,
-    justifyContent: "space-between",
+    justifyContent: "space-between"
   },
   removeIcon: {
     position: "absolute",
     top: 10,
     right: 10,
-    zIndex: 999,
+    zIndex: 999
   },
   icon: {
-    zIndex: 999,
+    zIndex: 999
   },
   infoContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-    paddingVertical: 1,
+    paddingVertical: 1
   },
   boldText: {
-    fontWeight: "bold",
+    fontWeight: "bold"
   },
   ratingText: {
-    marginLeft: 4,
-  },
+    marginLeft: 4
+  }
 });
