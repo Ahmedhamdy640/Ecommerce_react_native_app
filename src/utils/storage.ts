@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export enum StorageKey {
-  USER = "user",
+  TOKEN = "TOKEN"
 }
 
 class Storage {
@@ -13,8 +13,12 @@ class Storage {
     }
   };
 
-  public getItem(key: StorageKey) {
-    return AsyncStorage.getItem(key);
+  public async getItem(key: StorageKey) {
+    return await AsyncStorage.getItem(key);
+  }
+
+  public async removeItem(key: StorageKey) {
+    return await AsyncStorage.removeItem(key);
   }
 }
 
