@@ -7,9 +7,7 @@ https://youtube.com/shorts/-sQDVf7Hrw0
 
 ## ✨ Features
 
-- 🛍️ Product browsing and search
-- 📦 Category-based filtering
-- 🛒 Shopping cart management
+- 📦 Category-based Screen
 - 👤 User authentication
 - 📱 Responsive mobile UI
 - 🔄 State management with Redux Toolkit
@@ -35,7 +33,7 @@ For mobile development:
 
 1. **Clone the repository**
    ```bash
-   git clone <your-repository-url>
+   git clone https://github.com/Ahmedhamdy640/Ecommerce_react_native_app.git
    cd ecommerce_react_native_app
    ```
 
