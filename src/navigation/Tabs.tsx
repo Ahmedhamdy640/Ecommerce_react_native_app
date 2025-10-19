@@ -4,11 +4,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { TopTabs } from "./TopTabs";
 import { useCurrentUser } from "../hooks/useAuth";
 import { ActivityIndicator } from "react-native";
+import type { TabParamList } from "./types";
 
-const Tab = createBottomTabNavigator();
+const Tab = createBottomTabNavigator<TabParamList>();
 
 export const Tabs = () => {
-  const { data, isLoading } = useCurrentUser();
+  const { isLoading } = useCurrentUser();
 
   if (isLoading) {
     return <ActivityIndicator size="large" style={{ flex: 1 }} />;
@@ -28,7 +29,7 @@ export const Tabs = () => {
           return <Ionicons name={iconName as any} size={size} color={color} />;
         },
         tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: "gray"
       })}
     >
       <Tab.Screen
