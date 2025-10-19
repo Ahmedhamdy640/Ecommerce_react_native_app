@@ -1,21 +1,19 @@
-import axios from "axios";
 import { ProductsResponse } from "../types/ProductType";
+import { axiosClient } from "./axiosClient";
 
-const productsApi = axios.create({
-  baseURL: "https://dummyjson.com/products",
-  headers: {
-    "Content-Type": "application/json",
+export const productsApi = {
+  getProducts: async () => {
+    const { data } = await axiosClient.get<ProductsResponse>("products");
+    return data;
   },
-});
-
-export const getProducts = async () => {
-  const { data } = await productsApi.get<ProductsResponse>("/");
-  return data;
-};
-
-export const getProductsByCategory = async (category: string) => {
-  const { data } = await productsApi.get<ProductsResponse>(
-    `/category/${category}`
-  );
-  return data;
+  getProductsByCategory: async (category: string) => {
+    const { data } = await axiosClient.get<ProductsResponse>(
+      `products/category/${category}`
+    );
+    return data;
+  },
+  deleteProduct: async (productId: number) => {
+    const respone = await axiosClient.delete(`products/${productId}`);
+    return respone.data;
+  }
 };

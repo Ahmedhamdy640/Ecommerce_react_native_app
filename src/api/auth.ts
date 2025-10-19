@@ -1,8 +1,17 @@
-import axios from "axios";
+import { axiosClient } from "./axiosClient";
+import { LoginResponse } from "../types/auth";
 
-export const authApi = axios.create({
-  baseURL: "https://dummyjson.com/auth",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export type LoginParams = {
+  username: string;
+  password: string;
+};
+
+export const authApi = {
+  login: async (params: LoginParams) => {
+    const response = await axiosClient.post<LoginResponse>(
+      "auth/login",
+      params
+    );
+    return response.data;
+  }
+};
