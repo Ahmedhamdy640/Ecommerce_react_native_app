@@ -9,6 +9,7 @@ const useIdleTimer = (onIdle: () => void, timeout = 10000) => {
     if (timerId.current) {
       clearTimeout(timerId.current);
     }
+
     setIsIdle(false);
     timerId.current = setTimeout(() => {
       onIdle();
@@ -34,27 +35,14 @@ const useIdleTimer = (onIdle: () => void, timeout = 10000) => {
   useEffect(() => {
     resetTimer();
 
-    // const handleAppStateChange = (nextAppState: any) => {
-    //   if (nextAppState === "background") {
-    //     onIdle();
-    //     setIsIdle(true);
-    //   }
-    // };
-
-    // const subscription = AppState.addEventListener(
-    //   "change",
-    //   handleAppStateChange
-    // );
-
     return () => {
       if (timerId.current) {
         clearTimeout(timerId.current);
       }
-      // subscription.remove();
     };
   }, [onIdle]);
 
-  return { panResponder, isIdle, setIsIdle };
+  return { panResponder, isIdle, setIsIdle, resetTimer };
 };
 
 export default useIdleTimer;

@@ -1,32 +1,26 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getProductsByCategory } from "../api/products";
 import { Product } from "../types/ProductType";
-import axios from "axios";
+import { productsApi } from "../api/products";
 
 export const useCategory = () =>
   useQuery({
     queryKey: ["categories"],
-    queryFn: () => getProductsByCategory("smartphones"),
+    queryFn: () => productsApi.getProductsByCategory("smartphones")
   });
 
 export const useDeleteCategoryProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation<Product, Error, number>({
-    mutationFn: async (productId) => {
-      const response = await axios.delete(
-        `https://dummyjson.com/products/${productId}`
-      );
-      return response.data;
-    },
+    mutationFn: productsApi.deleteProduct,
     onError: (error) => {
       console.error("Error deleting product:", error);
     },
     onSuccess: (data, productId) => {
       queryClient.setQueryData(["categories"], (oldData: any) => ({
         ...oldData,
-        products: oldData.products.filter((p: any) => p.id !== productId),
+        products: oldData.products.filter((p: any) => p.id !== productId)
       }));
-    },
+    }
   });
 };

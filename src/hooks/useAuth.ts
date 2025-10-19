@@ -2,28 +2,17 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { authApi } from "../api/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store";
-import axios from "axios";
 import { useEffect } from "react";
 import { currentUserData } from "../store/authSlice";
 import { User } from "../types/UserType";
-
-interface Credentials {
-  username: string;
-  password: string;
-}
+import { userApi } from "../api/user";
 
 export const useLogin = () => {
-  const queryClient = useQueryClient();
-
-  return useMutation({
-    mutationFn: async ({ username, password }: Credentials) => {
-      const response = await authApi.post("/login", { username, password });
-      return response.data;
-    },
-    onSuccess: async (data) => {
-      queryClient.invalidateQueries({ queryKey: ["user"] });
-    },
+  const mutation = useMutation({
+    mutationFn: authApi.login
   });
+
+  return mutation;
 };
 
 export const useCurrentUser = () => {
@@ -32,17 +21,8 @@ export const useCurrentUser = () => {
 
   const query = useQuery<User>({
     queryKey: ["currentUser"],
-    queryFn: async () => {
-      const response = await axios.get("https://dummyjson.com/user/me", {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        withCredentials: true,
-      });
-      // console.log("response current user", response.data);
-      return response.data;
-    },
-    enabled: !!accessToken,
+    queryFn: userApi.getMe,
+    enabled: !!accessToken
   });
 
   useEffect(() => {
