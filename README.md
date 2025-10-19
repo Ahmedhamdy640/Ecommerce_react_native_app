@@ -3,7 +3,10 @@
 A feature-rich e-commerce mobile application built with React Native, Expo, Redux Toolkit, and React Query.
 
 ## 📱 Demo Video
-https://youtube.com/shorts/-sQDVf7Hrw0 
+android: 
+https://youtube.com/shorts/-sQDVf7Hrw0?si=NnovQ7wKkKqa-K2e
+ios:
+https://youtube.com/shorts/3uiKIYtALiY?si=iBMFb64btn_icdQI
 
 ## ✨ Features
 
