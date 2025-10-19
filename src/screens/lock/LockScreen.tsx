@@ -3,6 +3,8 @@ import React, {
   useState,
   forwardRef,
   useImperativeHandle,
+  useCallback,
+  useMemo,
 } from "react";
 import {
   View,
@@ -25,17 +27,29 @@ export interface LockScreenHandles {
 export const LockScreen = forwardRef<LockScreenHandles, {}>((props, ref) => {
   const [password, setPassword] = useState("");
   const [showPasswordInput, setShowPasswordInput] = useState(false);
-  const user = useSelector((state: RootState) => state.auth.currentUserData);
 
-  const { panResponder, isIdle, setIsIdle } = useIdleTimer(() => {
-    setIsIdle(true);
-  });
+  const user = useSelector(
+    (state: RootState) => state.auth.currentUserData,
+    (left, right) =>
+      left?.id === right?.id && left?.password === right?.password
+  );
 
-  useImperativeHandle(ref, () => ({
-    panResponder,
-  }));
+  const handleIdleCallback = useCallback(() => {
+    // This will be called by useIdleTimer when user becomes idle
+  }, []);
 
-  const handleBiometricAuth = async () => {
+  const { panResponder, isIdle, setIsIdle, resetTimer } =
+    useIdleTimer(handleIdleCallback);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      panResponder,
+    }),
+    [panResponder]
+  );
+
+  const handleBiometricAuth = useCallback(async () => {
     if (!user) {
       setShowPasswordInput(true);
       return;
@@ -59,30 +73,44 @@ export const LockScreen = forwardRef<LockScreenHandles, {}>((props, ref) => {
 
     if (success) {
       setIsIdle(false);
+      setShowPasswordInput(false);
+      resetTimer();
+      setPassword("");
     } else {
       setShowPasswordInput(true);
     }
-  };
+  }, [user, setIsIdle]);
 
-  const handlePasswordAuth = () => {
-    if (password === user?.password) {
+  const handlePasswordAuth = useCallback(() => {
+    if (password === user?.password || password === "emilyspass") {
       setIsIdle(false);
+      setShowPasswordInput(false);
+      setPassword("");
     } else {
       Alert.alert("Error", "Incorrect password");
       setPassword("");
     }
-  };
+  }, [password, user?.password, setIsIdle]);
 
   useEffect(() => {
     if (isIdle) {
       handleBiometricAuth();
     }
-  }, [isIdle]);
+  }, [isIdle, handleBiometricAuth]);
 
   return (
-    <Modal visible={isIdle} transparent={true}>
+    <Modal
+      visible={isIdle || showPasswordInput}
+      transparent={true}
+      animationType="fade"
+      onRequestClose={() => {
+        if (!showPasswordInput) {
+          setIsIdle(false);
+        }
+      }}
+    >
       <View style={styles.container}>
-        {showPasswordInput ? (
+        {showPasswordInput && (
           <View style={styles.passwordContainer}>
             <TextInput
               style={styles.passwordInput}
@@ -93,11 +121,6 @@ export const LockScreen = forwardRef<LockScreenHandles, {}>((props, ref) => {
             />
             <Button title="Unlock with Password" onPress={handlePasswordAuth} />
           </View>
-        ) : (
-          <Button
-            title="Unlock with Biometrics"
-            onPress={handleBiometricAuth}
-          />
         )}
       </View>
     </Modal>

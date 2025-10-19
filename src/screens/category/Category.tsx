@@ -1,33 +1,13 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text } from "react-native";
+import { ActivityIndicator, Text } from "react-native";
 import React from "react";
 import { useCategory, useDeleteCategoryProduct } from "../../hooks/useCategory";
-import { Product } from "../../types/ProductType";
-import ProductCard from "../../components/ProductCard";
-import { useSelector } from "react-redux";
-import { RootState } from "../../store";
-import { SUPER_ADMI_USERNAME } from "../../constants";
 
-interface RenderItemProps {
-  item: Product;
-}
-const Category = () => {
+import { TopTabScreenProps } from "../../navigation/types";
+import { ProductList } from "../../components/ProductList";
+
+const Category: React.FC<TopTabScreenProps<"Smartphones">> = () => {
   const { data, isLoading, error, refetch } = useCategory();
-  const deleteProduct = useDeleteCategoryProduct();
-
-  const handleDelete = (productId: number) => {
-    if (!data) return;
-    deleteProduct.mutate(productId);
-  };
-
-  const currentUser = useSelector(
-    (state: RootState) => state.auth.currentUserData
-  );
-  // Product.log(">>>>", currentUser);
-
-  const isAdmin = currentUser?.username === SUPER_ADMI_USERNAME;
-  const renderItem = ({ item }: RenderItemProps) => (
-    <ProductCard data={item} isAdmin={isAdmin} handleDelete={handleDelete} />
-  );
+  const { mutateAsync: deleteProduct } = useDeleteCategoryProduct();
 
   const header = () => (
     <Text style={{ fontSize: 24, fontWeight: "bold", margin: 10 }}>
@@ -48,17 +28,14 @@ const Category = () => {
   }
 
   return (
-    <FlatList
+    <ProductList
       ListHeaderComponent={header}
-      renderItem={renderItem}
-      data={data?.products}
-      numColumns={2}
+      products={data?.products || []}
       refreshing={isLoading}
       onRefresh={refetch}
+      deleteProduct={deleteProduct}
     />
   );
 };
 
 export default Category;
-
-const styles = StyleSheet.create({});
